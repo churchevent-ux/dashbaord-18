@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { db } from "../firebase";
 import Logo from "../images/church logo2.png";
 
 const Register = () => {
@@ -146,7 +148,8 @@ const handleRemoveSibling = (index) => {
   setFormData({ ...formData, siblings: updatedSiblings });
 };
 
-const handleSubmit = (e) => {
+
+const handleSubmit = async (e) => {
   e.preventDefault();
 
   // Validation for required fields
@@ -195,13 +198,12 @@ const handleSubmit = (e) => {
     medicalConditions: formData.medicalConditions,
     otherCondition: formData.otherCondition,
     medicalNotes: formData.medicalNotes,
+    createdAt: serverTimestamp(),
   };
 
-  // Sibling participants (removed unused variable siblingParticipants)
-
-const allParticipants = [
-  mainParticipant,
-  ...(formData.hasSibling === "yes"
+  // Sibling participants
+  const siblingParticipants =
+    formData.hasSibling === "yes"
       ? formData.siblings.map((sibling) => ({
           ...sibling,
           fatherName: formData.fatherName,
@@ -217,14 +219,24 @@ const allParticipants = [
           medicalConditions: formData.medicalConditions,
           otherCondition: formData.otherCondition,
           medicalNotes: formData.medicalNotes,
+          createdAt: serverTimestamp(),
         }))
-      : []),
-];
+      : [];
 
-navigate("/preview", { state: { participants: allParticipants } });
+  const allParticipants = [mainParticipant, ...siblingParticipants];
 
-  setLoading(false);
-  navigate("/preview", { state: { participants: allParticipants } });
+  try {
+    const usersRef = collection(db, "users");
+    // Save all participants (main + siblings)
+    for (const participant of allParticipants) {
+      await addDoc(usersRef, participant);
+    }
+    setLoading(false);
+    navigate("/preview", { state: { participants: allParticipants } });
+  } catch (err) {
+    setLoading(false);
+    alert("Failed to save registration: " + err.message);
+  }
 };
 
 
