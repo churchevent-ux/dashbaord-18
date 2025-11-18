@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { FaHandsHelping } from "react-icons/fa";
 
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleResize = () => {
@@ -21,14 +22,22 @@ const Sidebar = () => {
   const links = [
     { icon: "🏠", text: "Dashboard", path: "/admin/dashboard" },
     { icon: "👥", text: "Students", path: "/admin/users" },
+    { icon: "💳", text: "Payment", path: "/admin/payment" },
     { icon: "📋", text: "Attendance", path: "/admin/attendance" },
     { icon: "☕", text: "Break", path: "/admin/break" },
-    { icon: "🎯", text: "Teams", path: "/admin/Teams" },
+    // { icon: "🎯", text: "Teams", path: "/admin/Teams" },
     { icon:<FaHandsHelping />,text: "Volunteers", path: "/admin/volunteers" },
     { icon: "🔔", text: "Notifications", path: "/admin/notifications" },
     { icon: "⚙️", text: "Settings", path: "/admin/settings" },
     // { icon: "🗂️", text: "History", path: "/admin/history" },
   ];
+
+  const handleLogout = () => {
+    if (window.confirm("Are you sure you want to logout?")) {
+      localStorage.removeItem("dashboardUser");
+      navigate("/dashboard-login");
+    }
+  };
 
   const sidebarStyle = {
     position: "fixed",
@@ -104,7 +113,7 @@ const Sidebar = () => {
           Dashboard
         </h2>
 
-        <nav style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+        <nav style={{ display: "flex", flexDirection: "column", gap: 6, flex: 1 }}>
           {links.map((link) => (
             <NavLink
               key={link.text}
@@ -127,6 +136,28 @@ const Sidebar = () => {
             </NavLink>
           ))}
         </nav>
+
+        {/* Logout Button */}
+        <button
+          onClick={handleLogout}
+          style={{
+            marginTop: "auto",
+            padding: "10px",
+            backgroundColor: "#c0392b",
+            color: "#fff",
+            border: "none",
+            borderRadius: 6,
+            cursor: "pointer",
+            fontWeight: "600",
+            fontSize: 14,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 8,
+          }}
+        >
+          <span>🚪</span> Logout
+        </button>
       </aside>
 
       {/* Overlay */}

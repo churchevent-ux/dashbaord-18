@@ -7,6 +7,8 @@ import Register from "./pages/Register";
 import Login from "./pages/login";
 import AdminLogin from "./pages/AdminLogin";
 import IDCard from "./pages/IDCard";
+import DashboardLogin from "./pages/DashboardLogin";
+import AcceptInvitation from "./pages/AcceptInvitation";
 
 // ===================== Admin Layout & Pages =====================
 import AdminLayout from "./pages/AdminLayout";
@@ -22,10 +24,15 @@ import BreakIn from "./pages/break";
 import Notifications from "./pages//notifications";
 import Volunteers from "./pages/volunteers";
 import Preview from "./pages/Preview";
+import Payment from "./pages/Payment";
 
 // ===================== Volunteer Pages =====================
 import VolunteerRegister from "./pages/VolunteerRegister";
 import VolunteerIDCard from "./pages/VolunteerIDCard";
+import VolunteerDetails from "./pages/VolunteerDetails";
+
+// ===================== Protected Route =====================
+import ProtectedRoute from "./component/ProtectedRoute";
 
 // ===================== Utility / Scanner =====================
 // import AttendanceScanner from "./pages/AttendanceScanner";
@@ -35,7 +42,9 @@ function App() {
     <Router>
       <Routes>
         {/* -------------------- Public Routes -------------------- */}
-        <Route path="/" element={<Navigate to="/admin/dashboard" replace />} />
+        <Route path="/" element={<Navigate to="/dashboard-login" replace />} />
+        <Route path="/dashboard-login" element={<DashboardLogin />} />
+        <Route path="/accept-invitation" element={<AcceptInvitation />} />
         <Route path="/home" element={<Home />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
@@ -48,7 +57,7 @@ function App() {
 
 
         {/* -------------------- Admin Routes with Layout -------------------- */}
-        <Route path="/admin" element={<AdminLayout />}>
+        <Route path="/admin" element={<ProtectedRoute><AdminLayout /></ProtectedRoute>}>
           {/* Redirect /admin to dashboard */}
           <Route index element={<Navigate to="dashboard" replace />} />
 
@@ -64,6 +73,8 @@ function App() {
           <Route path="break" element={<BreakIn />} />
           <Route path="notifications" element={<Notifications />} />
           <Route path="volunteers" element={<Volunteers />} />
+          <Route path="volunteers/:id" element={<VolunteerDetails />} />
+          <Route path="payment" element={<Payment />} />
         </Route>
 
         {/* -------------------- Fallback Route -------------------- */}

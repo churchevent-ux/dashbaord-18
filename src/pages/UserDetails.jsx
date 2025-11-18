@@ -33,6 +33,13 @@ const UserDetails = () => {
 
   if (!user) return <div style={styles.notFound}>User not found</div>;
 
+  const getCategory = () => {
+    const age = user.age || (user.dob ? new Date().getFullYear() - new Date(user.dob).getFullYear() : null);
+    if (age >= 8 && age <= 12) return "Kids";
+    if (age >= 13 && age <= 18) return "Teen";
+    return user.category || "N/A";
+  };
+
   const getMedicalText = () => {
     if (!user.medicalConditions?.length) return "None";
     const conditions = user.medicalConditions.join(", ");
@@ -198,7 +205,7 @@ const UserDetails = () => {
               </tr>
               <tr>
                 <td style={styles.tableLabel}>Category</td>
-                <td style={styles.tableValue}>{user.category || "-"}</td>
+                <td style={styles.tableValue}>{getCategory()}</td>
               </tr>
               <tr>
                 <td style={styles.tableLabel}>Primary Contact</td>
@@ -261,17 +268,24 @@ const UserDetails = () => {
               <p style={styles.subTextSmall}>P.O. BOX: 51200, Dubai, U.A.E</p>
             </div>
 
-            <h2 style={styles.name}>
+            <h2 style={{
+              ...styles.name,
+              fontStyle: (user.medicalConditions?.length > 0 && !user.medicalConditions.includes("N/A") && !user.medicalConditions.includes("None")) ? "italic" : "normal"
+            }}>
               {(user.participantName || user.name || "").toUpperCase()}
             </h2>
+            <p style={styles.idText}>{user.uniqueId || user.studentId || user.id}</p>
             <p style={styles.categoryLine}>
-              Category: {user.category || "N/A"} | Medical: {user.medicalConditions?.length > 0 ? user.medicalConditions.join(", ") : "None"}
+              Category: {getCategory()} | Medical: {(user.medicalConditions?.length > 0 && !user.medicalConditions.includes("N/A") && !user.medicalConditions.includes("None")) ? user.medicalConditions.join(", ") : "N/A"}
             </p>
 
             <div style={styles.qrWrapper}>
-              <QRCodeCanvas value={user.uniqueId || user.studentId || user.id} size={150} />
+              <QRCodeCanvas 
+                value={user.uniqueId || user.studentId || user.id} 
+                size={180}
+                fgColor={(user.uniqueId || user.studentId || user.id).startsWith("DGT") ? "#233282" : (user.uniqueId || user.studentId || user.id).startsWith("DGK") ? "#FF0000" : "#000000"}
+              />
             </div>
-            <p style={styles.idText}>{user.uniqueId || user.studentId || user.id}</p>
           </div>
 
           <div style={styles.buttonWrapper}>
@@ -328,17 +342,18 @@ const styles = {
     boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
     display: "flex",
     flexDirection: "column",
-    justifyContent: "space-between",
+    justifyContent: "flex-start",
+    alignItems: "center",
   },
   logoSection: { marginBottom: 4 },
   logo: { maxWidth: 50, marginBottom: 2 },
-  organization: { margin: "2px 0", fontSize: 12, color: "#2c3e50", fontWeight: "bold" },
-  subText: { margin: "1px 0", fontSize: 9, color: "#555" },
-  subTextSmall: { margin: "1px 0", fontSize: 8, color: "#777" },
-  name: { margin: "4px 0", fontSize: 14, color: "#6c3483", fontWeight: "bold" },
-  categoryLine: { margin: "3px 0", fontSize: 9, color: "#555", fontWeight: "500" },
-  idText: { margin: "4px 0", fontWeight: "bold", fontSize: 11 },
-  qrWrapper: { marginTop: 5, display: "flex", justifyContent: "center" },
+  organization: { margin: "0", fontSize: 13, color: "#2c3e50", fontWeight: "bold" },
+  subText: { margin: "1px 0", fontSize: 9.5, color: "#555" },
+  subTextSmall: { margin: "1px 0", fontSize: 8.5, color: "#777" },
+  name: { margin: "8px 0 1px 0", fontSize: 13.5, color: "#6c3483", fontWeight: "bold" },
+  categoryLine: { margin: "1px 0", fontSize: 8, color: "#555", fontWeight: "500" },
+  idText: { margin: "1px 0", fontWeight: "bold", fontSize: 10.5, color: "#2c3e50" },
+  qrWrapper: { marginTop: 4, flex: 1, display: "flex", justifyContent: "center", alignItems: "center" },
   addressText: { fontSize: 12, color: "#555", marginTop: 12 },
   buttonWrapper: { marginTop: 20, display: "flex", justifyContent: "center", gap: 10, flexWrap: "wrap" },
   downloadBtn: { padding: "10px 20px", background: "#6c3483", color: "#fff", border: "none", borderRadius: 8, cursor: "pointer" },
