@@ -131,22 +131,31 @@ const Users = () => {
         });
 
         const displayId = user.uniqueId || user.studentId || user.id;
+        const qrColor = displayId.startsWith("DGT") ? "#233282" : displayId.startsWith("DGK") ? "#FF0000" : "#000000";
+        
+        // Calculate category based on age
+        const age = user.age || (user.dob ? new Date().getFullYear() - new Date(user.dob).getFullYear() : null);
+        const category = (age >= 8 && age <= 12) ? "Kids" : (age >= 13 && age <= 18) ? "Teen" : (user.category || "N/A");
+        
+        // Get medical conditions properly
+        const hasMedical = user.medicalConditions?.length > 0 && !user.medicalConditions.includes("N/A") && !user.medicalConditions.includes("None");
+        const nameStyle = hasMedical ? "font-style:italic" : "";
 
         card.innerHTML = `
           <div>
-            <img src="${Logo}" alt="Logo" style="max-width:50px;margin-bottom:2px"/>
+            <img src="${Logo}" alt="Logo" style="max-width:80px;margin-bottom:2px"/>
             <h3 style="margin:2px 0;font-size:12px;color:#2c3e50;font-weight:bold">Deo Gratias 2025</h3>
             <p style="margin:1px 0;font-size:9px;color:#555">Teens & Kids Retreat</p>
             <p style="margin:1px 0;font-size:8px;color:#777">(Dec 28 – 30) | St. Mary's Church, Dubai</p>
             <p style="margin:1px 0;font-size:8px;color:#777">P.O. BOX: 51200, Dubai, U.A.E</p>
           </div>
           <div>
-            <h2 style="margin:4px 0;font-size:14px;color:#6c3483;font-weight:bold">${capitalizeName(user.participantName || user.name)}</h2>
-            <p style="margin:3px 0;font-size:9px;color:#555">Category: ${user.category || "N/A"} | Medical: ${user.medicalConditions?.length > 0 ? user.medicalConditions.join(", ") : "None"}</p>
+            <h2 style="margin:4px 0;font-size:14px;color:#6c3483;font-weight:bold;${nameStyle}">${capitalizeName(user.participantName || user.name).toUpperCase()}</h2>
+            <p style="margin:3px 0;font-size:9px;color:#555">Category: ${category}</p>
           </div>
           <div style="display:flex;flex-direction:column;align-items:center">
             <div id="qr-${user.id}"></div>
-            <p style="margin:4px 0;font-weight:bold;font-size:11px">${displayId}</p>
+            <p style="margin:4px 0;font-weight:bold;font-size:11px;color:${qrColor}">${displayId}</p>
           </div>
         `;
 
@@ -156,7 +165,7 @@ const Users = () => {
         const qrDiv = card.querySelector(`#qr-${user.id}`);
         if (qrDiv) {
           const root = createRoot(qrDiv);
-          root.render(<QRCodeSVG value={displayId} size={150} />);
+          root.render(<QRCodeSVG value={displayId} size={150} fgColor={qrColor} />);
           await new Promise((resolve) => setTimeout(resolve, 100));
         }
 
@@ -246,22 +255,31 @@ const Users = () => {
         });
 
         const displayId = user.uniqueId || user.studentId || user.id;
+        const qrColor = displayId.startsWith("DGT") ? "#233282" : displayId.startsWith("DGK") ? "#FF0000" : "#000000";
+        
+        // Calculate category based on age
+        const age = user.age || (user.dob ? new Date().getFullYear() - new Date(user.dob).getFullYear() : null);
+        const category = (age >= 8 && age <= 12) ? "Kids" : (age >= 13 && age <= 18) ? "Teen" : (user.category || "N/A");
+        
+        // Get medical conditions properly
+        const hasMedical = user.medicalConditions?.length > 0 && !user.medicalConditions.includes("N/A") && !user.medicalConditions.includes("None");
+        const nameStyle = hasMedical ? "font-style:italic" : "";
 
         card.innerHTML = `
           <div>
-            <img src="${Logo}" alt="Logo" style="max-width:50px;margin-bottom:2px"/>
+            <img src="${Logo}" alt="Logo" style="max-width:80px;margin-bottom:2px"/>
             <h3 style="margin:2px 0;font-size:12px;color:#2c3e50;font-weight:bold">Deo Gratias 2025</h3>
             <p style="margin:1px 0;font-size:9px;color:#555">Teens & Kids Retreat</p>
             <p style="margin:1px 0;font-size:8px;color:#777">(Dec 28 – 30) | St. Mary's Church, Dubai</p>
             <p style="margin:1px 0;font-size:8px;color:#777">P.O. BOX: 51200, Dubai, U.A.E</p>
           </div>
           <div>
-            <h2 style="margin:4px 0;font-size:14px;color:#6c3483;font-weight:bold">${capitalizeName(user.participantName || user.name)}</h2>
-            <p style="margin:3px 0;font-size:9px;color:#555">Category: ${user.category || "N/A"} | Medical: ${user.medicalConditions?.length > 0 ? user.medicalConditions.join(", ") : "None"}</p>
+            <h2 style="margin:4px 0;font-size:14px;color:#6c3483;font-weight:bold;${nameStyle}">${capitalizeName(user.participantName || user.name).toUpperCase()}</h2>
+            <p style="margin:3px 0;font-size:9px;color:#555">Category: ${category}</p>
           </div>
           <div style="display:flex;flex-direction:column;align-items:center">
             <div id="qr-${user.id}"></div>
-            <p style="margin:4px 0;font-weight:bold;font-size:11px">${displayId}</p>
+            <p style="margin:4px 0;font-weight:bold;font-size:11px;color:${qrColor}">${displayId}</p>
           </div>
         `;
 
@@ -271,7 +289,7 @@ const Users = () => {
         const qrDiv = card.querySelector(`#qr-${user.id}`);
         if (qrDiv) {
           const root = createRoot(qrDiv);
-          root.render(<QRCodeSVG value={displayId} size={150} />);
+          root.render(<QRCodeSVG value={displayId} size={150} fgColor={qrColor} />);
           await new Promise((resolve) => setTimeout(resolve, 100));
         }
 
