@@ -289,10 +289,62 @@ const handleSubmit = async (e) => {
   try {
     const usersRef = collection(db, "users");
     
-    // Save all participants (main + siblings) with unique IDs
+    // Initialize counters for each category by fetching the last IDs
+    const categoryCounters = {};
+    
+    // Get unique categories from all participants
+    const categories = [...new Set(allParticipants.map(p => p.category))];
+    
+    // Fetch last ID for each category
+    for (const category of categories) {
+      let prefix = "";
+      if (category === "Kids") {
+        prefix = "DGK";
+      } else if (category === "Teen") {
+        prefix = "DGT";
+      } else {
+        prefix = "DGX";
+      }
+      
+      const q = query(
+        usersRef,
+        where("uniqueId", ">=", `${prefix}-000`),
+        where("uniqueId", "<", `${prefix}-999999`),
+        orderBy("uniqueId", "desc"),
+        limit(1)
+      );
+      
+      const snapshot = await getDocs(q);
+      let lastNumber = 0;
+      
+      snapshot.forEach((doc) => {
+        const lastId = doc.data().uniqueId;
+        if (lastId) {
+          const numberPart = lastId.split("-")[1];
+          lastNumber = parseInt(numberPart) || 0;
+        }
+      });
+      
+      categoryCounters[category] = lastNumber;
+    }
+    
+    // Save all participants with unique IDs
+    const savedParticipants = [];
     for (const participant of allParticipants) {
-      // Generate unique ID based on category
-      const uniqueId = await generateUniqueId(participant.category);
+      // Increment counter for this category
+      categoryCounters[participant.category] = (categoryCounters[participant.category] || 0) + 1;
+      
+      // Generate unique ID
+      let prefix = "";
+      if (participant.category === "Kids") {
+        prefix = "DGK";
+      } else if (participant.category === "Teen") {
+        prefix = "DGT";
+      } else {
+        prefix = "DGX";
+      }
+      
+      const uniqueId = `${prefix}-${String(categoryCounters[participant.category]).padStart(3, "0")}`;
       
       // Add uniqueId to participant data
       const participantWithId = {
@@ -300,12 +352,14 @@ const handleSubmit = async (e) => {
         uniqueId: uniqueId,
       };
       
+      savedParticipants.push(participantWithId);
+      
       // Use setDoc with the unique ID as document ID
       await setDoc(doc(usersRef, uniqueId), participantWithId);
     }
     
     setLoading(false);
-    navigate("/preview", { state: { participants: allParticipants } });
+    navigate("/preview", { state: { participants: savedParticipants } });
   } catch (err) {
     setLoading(false);
     alert("Failed to save registration: " + err.message);
