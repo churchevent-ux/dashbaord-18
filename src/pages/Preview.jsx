@@ -48,11 +48,13 @@ const Preview = () => {
       : []; // empty initially
 
     return {
+      ...p, // Keep all original data including uniqueId
       participantName: p.participantName || p.name || p.siblingName || "",
       dob: p.dob || "",
       age,
       categoryLabel: label,
       categoryCode: code,
+      category: p.category || label,
       primaryContactNumber: p.primaryContactNumber || "",
       primaryContactRelation: p.primaryContactRelation || "",
       secondaryContactNumber: p.secondaryContactNumber || "",

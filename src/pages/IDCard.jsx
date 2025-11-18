@@ -49,11 +49,15 @@ const IDCard = () => {
   useEffect(() => {
     if (!state?.formData) return navigate("/register");
 
-    const allParticipants = [state.formData, ...(state.siblings || [])].map((p) => ({
-      ...p,
-      familyId: p.uniqueId || p.familyId || p.studentId || p.id,
-      category: p.category || getCategoryCode(p.age, p.dob),
-    }));
+    const allParticipants = [state.formData, ...(state.siblings || [])].map((p) => {
+      const displayId = p.uniqueId || p.familyId || p.studentId || p.id;
+      console.log("Participant ID:", displayId, "Data:", p); // Debug log
+      return {
+        ...p,
+        familyId: displayId,
+        category: p.category || p.categoryLabel || getCategoryCode(p.age, p.dob),
+      };
+    });
 
     setParticipants(allParticipants);
   }, [state, navigate, getCategoryCode]);
