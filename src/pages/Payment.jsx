@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { collection, getDocs, doc, updateDoc } from "firebase/firestore";
 import { db } from "../firebase";
 import { Html5QrcodeScanner } from "html5-qrcode";
+import { sendPaymentEmail } from "../utils/email";
 
 const Payment = () => {
   const [users, setUsers] = useState([]);
@@ -36,6 +37,7 @@ const Payment = () => {
         user.address?.toLowerCase().includes(search)
       );
     });
+
     setFilteredUsers(filtered);
   }, [searchTerm, users]);
 
@@ -51,8 +53,6 @@ const Payment = () => {
 
   const startScanner = () => {
     setScannerActive(true);
-    
-    // Wait for DOM to render
     setTimeout(() => {
       const scannerElement = document.getElementById("qr-reader");
       if (!scannerElement) {
@@ -60,13 +60,11 @@ const Payment = () => {
         setScannerActive(false);
         return;
       }
-
       const html5QrcodeScanner = new Html5QrcodeScanner(
         "qr-reader",
         { fps: 10, qrbox: { width: 250, height: 250 } },
         false
       );
-
       html5QrcodeScanner.render(onScanSuccess, onScanFailure);
       setScanner(html5QrcodeScanner);
     }, 100);
@@ -81,11 +79,8 @@ const Payment = () => {
   };
 
   const onScanSuccess = (decodedText) => {
-    console.log("Scanned:", decodedText);
     setSearchTerm(decodedText);
     stopScanner();
-    
-    // Find user by scanned ID
     const foundUser = users.find(
       (u) => u.uniqueId === decodedText || u.studentId === decodedText || u.id === decodedText
     );
@@ -94,9 +89,7 @@ const Payment = () => {
     }
   };
 
-  const onScanFailure = (error) => {
-    // Ignore scan failures
-  };
+  const onScanFailure = (error) => {};
 
   const handleUserSelect = (user) => {
     setSelectedUser(user);
@@ -106,7 +99,6 @@ const Payment = () => {
 
   const handlePayment = async () => {
     if (!selectedUser) return;
-
     try {
       const userDocRef = doc(db, "users", selectedUser.id);
       await updateDoc(userDocRef, {
@@ -114,16 +106,29 @@ const Payment = () => {
         feePaidAmount: paymentAmount,
         feePaidAt: new Date(),
       });
-
-      alert(`Payment of AED ${paymentAmount}/- recorded successfully for ${selectedUser.participantName || selectedUser.name}!`);
-      
-      // Update local state
-      setUsers(users.map(u => 
-        u.id === selectedUser.id 
+      // Send payment confirmation email
+      if (selectedUser.email) {
+        sendPaymentEmail({
+          toEmail: selectedUser.email,
+          toName: selectedUser.participantName || selectedUser.name,
+          amount: paymentAmount,
+          receipt_id: selectedUser.uniqueId || selectedUser.studentId || selectedUser.id,
+          date: new Date().toLocaleString(),
+        })
+          .then(() => {
+            alert(`Payment of AED ${paymentAmount}/- recorded and email sent to ${selectedUser.email}!`);
+          })
+          .catch((err) => {
+            alert(`Payment recorded, but email failed: ${err.text || err.message}`);
+          });
+      } else {
+        alert(`Payment of AED ${paymentAmount}/- recorded successfully for ${selectedUser.participantName || selectedUser.name}! (No email address)`);
+      }
+      setUsers(users.map(u =>
+        u.id === selectedUser.id
           ? { ...u, feeStatus: "paid", feePaidAmount: paymentAmount }
           : u
       ));
-      
       setShowPopup(false);
       setSelectedUser(null);
       setSearchTerm("");
@@ -157,7 +162,7 @@ const Payment = () => {
               📷 Scan QR/Barcode
             </button>
           ) : (
-            <button onClick={stopScanner} style={{...styles.scanButton, backgroundColor: "#e74c3c"}}>
+            <button onClick={stopScanner} style={{ ...styles.scanButton, backgroundColor: "#e74c3c" }}>
               ❌ Stop Scanner
             </button>
           )}
@@ -203,7 +208,6 @@ const Payment = () => {
         <div style={styles.overlay} onClick={closePopup}>
           <div style={styles.popup} onClick={(e) => e.stopPropagation()}>
             <h3 style={styles.popupTitle}>💳 Record Payment</h3>
-            
             <div style={styles.popupContent}>
               <div style={styles.popupUserInfo}>
                 <div style={styles.infoRow}>
@@ -236,7 +240,6 @@ const Payment = () => {
                   </span>
                 </div>
               </div>
-
               <div style={styles.amountSection}>
                 <label style={styles.label}>Payment Amount (AED)</label>
                 <input
@@ -246,7 +249,6 @@ const Payment = () => {
                   style={styles.amountInput}
                 />
               </div>
-
               <div style={styles.popupButtons}>
                 <button onClick={handlePayment} style={styles.payButton}>
                   ✅ Confirm Payment
