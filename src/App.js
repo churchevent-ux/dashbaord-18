@@ -25,6 +25,7 @@ import Notifications from "./pages//notifications";
 import Volunteers from "./pages/volunteers";
 import Preview from "./pages/Preview";
 import Payment from "./pages/Payment";
+import Paymenthistory from "./pages/paymenthistory";
 
 // ===================== Volunteer Pages =====================
 import VolunteerRegister from "./pages/VolunteerRegister";
@@ -75,6 +76,7 @@ function App() {
           <Route path="volunteers" element={<Volunteers />} />
           <Route path="volunteers/:id" element={<VolunteerDetails />} />
           <Route path="payment" element={<Payment />} />
+          <Route path="paymenthistory" element={<Paymenthistory />} />
         </Route>
 
         {/* -------------------- Fallback Route -------------------- */}
