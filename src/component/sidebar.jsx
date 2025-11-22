@@ -29,6 +29,8 @@ const Sidebar = () => {
     { icon:<FaHandsHelping />,text: "Volunteers", path: "/admin/volunteers" },
     { icon: "🔔", text: "Notifications", path: "/admin/notifications" },
     { icon: "⚙️", text: "Settings", path: "/admin/settings" },
+    { icon: "💳", text: "Payment History", path: "/admin/paymenthistory" },
+
     // { icon: "🗂️", text: "History", path: "/admin/history" },
   ];
 
