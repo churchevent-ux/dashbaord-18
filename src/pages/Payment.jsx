@@ -149,8 +149,8 @@ const Payment = () => {
       <h2 style={styles.title}>💳 Payment Portal</h2>
 
       <div style={styles.searchSection}>
-        <div style={styles.searchBox}>
-          <input
+      <div style={styles.searchBox} className="search-box">
+      <input
             type="text"
             placeholder="🔍 Search by Name, ID, Email, Phone, or Address"
             value={searchTerm}
@@ -264,7 +264,6 @@ const Payment = () => {
     </div>
   );
 };
-
 const styles = {
   container: {
     padding: 20,
@@ -272,28 +271,38 @@ const styles = {
     maxWidth: 1200,
     margin: "0 auto",
   },
+
+  /* ---------- TITLE ---------- */
   title: {
     fontSize: 28,
     marginBottom: 30,
     color: "#2c3e50",
     textAlign: "center",
+    fontWeight: "bold",
   },
+
+  /* ---------- SEARCH SECTION ---------- */
   searchSection: {
     marginBottom: 20,
   },
+
   searchBox: {
     display: "flex",
     gap: 10,
     marginBottom: 20,
+    flexWrap: "wrap",              // makes it responsive
   },
+
   searchInput: {
-    flex: 1,
+    flex: "1 1 300px",
     padding: "12px 20px",
     fontSize: 16,
     border: "2px solid #6c3483",
     borderRadius: 8,
     outline: "none",
+    boxSizing: "border-box",
   },
+
   scanButton: {
     padding: "12px 24px",
     backgroundColor: "#6c3483",
@@ -304,7 +313,10 @@ const styles = {
     fontSize: 16,
     fontWeight: "bold",
     whiteSpace: "nowrap",
+    flex: "0 0 auto",
   },
+
+  /* ---------- QR SCANNER ---------- */
   scannerContainer: {
     marginBottom: 20,
     padding: 20,
@@ -312,9 +324,12 @@ const styles = {
     borderRadius: 8,
     border: "2px solid #6c3483",
   },
+
   qrReader: {
     width: "100%",
   },
+
+  /* ---------- RESULTS LIST ---------- */
   resultsList: {
     maxHeight: 500,
     overflowY: "auto",
@@ -322,6 +337,7 @@ const styles = {
     borderRadius: 8,
     backgroundColor: "#fff",
   },
+
   userCard: {
     padding: 16,
     borderBottom: "1px solid #eee",
@@ -331,29 +347,35 @@ const styles = {
     alignItems: "center",
     transition: "background-color 0.2s",
   },
+
   userInfo: {
     flex: 1,
   },
+
   userName: {
     margin: "0 0 8px 0",
     fontSize: 18,
     color: "#2c3e50",
     fontWeight: "bold",
   },
+
   userId: {
     margin: "4px 0",
     fontSize: 14,
     color: "#6c3483",
-    fontWeight: "600",
+    fontWeight: 600,
   },
+
   userDetail: {
     margin: "4px 0",
     fontSize: 13,
     color: "#555",
   },
+
   feeStatus: {
     marginLeft: 16,
   },
+
   statusBadge: {
     padding: "6px 16px",
     borderRadius: 16,
@@ -361,6 +383,8 @@ const styles = {
     fontSize: 14,
     fontWeight: "bold",
   },
+
+  /* ---------- POPUP OVERLAY ---------- */
   overlay: {
     position: "fixed",
     top: 0,
@@ -373,6 +397,7 @@ const styles = {
     alignItems: "center",
     zIndex: 1000,
   },
+
   popup: {
     backgroundColor: "#fff",
     borderRadius: 12,
@@ -380,22 +405,28 @@ const styles = {
     maxWidth: 500,
     width: "90%",
     boxShadow: "0 10px 40px rgba(0,0,0,0.2)",
+    boxSizing: "border-box",
   },
+
   popupTitle: {
     fontSize: 24,
     marginBottom: 20,
     color: "#6c3483",
     textAlign: "center",
+    fontWeight: "bold",
   },
+
   popupContent: {
     marginBottom: 20,
   },
+
   popupUserInfo: {
     backgroundColor: "#f9f9f9",
     padding: 16,
     borderRadius: 8,
     marginBottom: 20,
   },
+
   infoRow: {
     display: "flex",
     justifyContent: "space-between",
@@ -403,18 +434,23 @@ const styles = {
     marginBottom: 12,
     fontSize: 14,
   },
+
   infoLabel: {
     minWidth: 120,
     color: "#2c3e50",
   },
+
   infoValue: {
     flex: 1,
     textAlign: "right",
     color: "#555",
   },
+
+  /* ---------- AMOUNT INPUT ---------- */
   amountSection: {
     marginBottom: 20,
   },
+
   label: {
     display: "block",
     marginBottom: 8,
@@ -422,6 +458,7 @@ const styles = {
     fontWeight: "bold",
     color: "#2c3e50",
   },
+
   amountInput: {
     width: "100%",
     padding: "12px 16px",
@@ -432,10 +469,13 @@ const styles = {
     fontWeight: "bold",
     boxSizing: "border-box",
   },
+
+  /* ---------- POPUP BUTTONS ---------- */
   popupButtons: {
     display: "flex",
     gap: 12,
   },
+
   payButton: {
     flex: 1,
     padding: "14px 20px",
@@ -447,6 +487,7 @@ const styles = {
     fontSize: 16,
     fontWeight: "bold",
   },
+
   cancelButton: {
     flex: 1,
     padding: "14px 20px",
